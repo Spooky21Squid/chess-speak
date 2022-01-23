@@ -15,7 +15,7 @@ assert numpy  # avoid "imported but unused" message (W0611)
 from deepgram import Deepgram
 import asyncio, json
 
-DEEPGRAM_API_KEY = '0a8d1fda25e16e5f9b614377cfe12176f9f54c1d'
+DEEPGRAM_API_KEY = '799ecb2a772ef3c9b9d6c0259412ebe76520ddbe'
 PATH_TO_FILE = 'output.wav'
 wd = webdriver.Firefox()
 wd.get("https://www.chess.com/play/computer/")
@@ -23,6 +23,7 @@ wd.get("https://www.chess.com/play/computer/")
 async def analyse():
     # Initializes the Deepgram SDK
     dg_client = Deepgram(DEEPGRAM_API_KEY)
+    j = ''
     # Open the audio file
     with open(PATH_TO_FILE, 'rb') as audio:
         # ...or replace mimetype as appropriate
@@ -30,19 +31,19 @@ async def analyse():
         response = await dg_client.transcription.prerecorded(source, {'punctuate': False})
         #print(json.dumps(response, indent=4))
         j = json.loads(json.dumps(response, indent=4))
-        words = list()
-        for r in j["results"]["channels"][0]["alternatives"][0]["words"]:
-            words.append(r["word"])
-        print("words:")
-        print(words)
-        if len(words) != 5:
-            print("Audio did not record correctly...")
-            return
-        source = Chess.convert2(words[0], words[1])
-        destination = Chess.convert2(words[3], words[4])
-        print("source: " + source)
-        print("destination: " + destination)
-        Chess.move(wd, words[0], words[1], words[3], words[4])
+    words = list()
+    for r in j["results"]["channels"][0]["alternatives"][0]["words"]:
+        words.append(r["word"])
+    print("words:")
+    print(words)
+    if len(words) != 5:
+        print("Audio did not record correctly...")
+        return
+    source = Chess.convert2(words[0], words[1])
+    destination = Chess.convert2(words[3], words[4])
+    print("source: " + source)
+    print("destination: " + destination)
+    Chess.move(wd, words[0], words[1], words[3], words[4])
 
         
 
@@ -127,7 +128,11 @@ class Chess:
         if f == "invalid" or t == "invalid":
             return
 
-        piece = wd.find_elements_by_class_name(f)[0]
+        #piece = wd.find_elements_by_class_name(f)[0]
+        for e in wd.find_elements_by_class_name(f):
+            if "piece" in e.get_attribute("class"):
+                piece = e
+
         piece.click()
         time.sleep(1)
         hints = wd.find_elements_by_class_name("hint")

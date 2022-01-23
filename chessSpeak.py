@@ -136,8 +136,16 @@ class Chess:
         piece.click()
         time.sleep(1)
         hints = wd.find_elements_by_class_name("hint")
+        captureHints = (wd.find_elements_by_class_name("capture-hint"))
         valid_move = False
+        
         for h in hints:
+            if t in h.get_attribute('class'):
+                valid_move = True
+                dropTarget = h
+                break
+        
+        for h in captureHints:
             if t in h.get_attribute('class'):
                 valid_move = True
                 dropTarget = h

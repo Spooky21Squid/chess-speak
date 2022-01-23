@@ -1,4 +1,4 @@
-# hack-cambridge
+# chess-speak
 Solution for Hack Cambridge - Chess Speak
 
 Converts voice moves into Chess.com moves
